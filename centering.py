@@ -8,6 +8,7 @@ DARK_BRIGHTNESS_THRESHOLD = 35
 LIGHT_BRIGHTNESS_THRESHOLD = 70
 REFERENCE_IMAGES_DIR = r'reference_images'
 
+
 def get_image_brightness(image):
     hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     Lchannel = hsl[:, :, 1]
@@ -55,14 +56,15 @@ def alignImages(im1, im2):
 
 
 def centering(im, im_type):
+    # detect input image brightness to choose best reference photo
     input_image_brightness = get_image_brightness(im)
 
     # reference photo
-    refFilename = os.path.join(REFERENCE_IMAGES_DIR + "optimal.jpg")
+    refFilename = os.path.join(REFERENCE_IMAGES_DIR + ''.join([im_type, "optimal.jpg"]))
     if input_image_brightness < DARK_BRIGHTNESS_THRESHOLD:
-        refFilename = os.path.join(REFERENCE_IMAGES_DIR + "dark.jpg")
+        refFilename = os.path.join(REFERENCE_IMAGES_DIR + ''.join([im_type, "dark.jpg"]))
     elif input_image_brightness > LIGHT_BRIGHTNESS_THRESHOLD:
-        refFilename = os.path.join(REFERENCE_IMAGES_DIR + "light.jpg")
+        refFilename = os.path.join(REFERENCE_IMAGES_DIR + ''.join([im_type, "light.jpg"]))
 
     imReference = cv2.imread(refFilename, cv2.IMREAD_COLOR)
 
