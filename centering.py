@@ -54,7 +54,7 @@ def alignImages(im1, im2):
     return im1_reg
 
 
-def centering(im):
+def centering(im, im_type):
     input_image_brightness = get_image_brightness(im)
 
     # reference photo
