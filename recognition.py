@@ -9,6 +9,11 @@ class Led:
         self.x, self.y, self.diameter = x, y, 25
 
 
+class Display:
+    def __init__(self, x, y):
+        self.x, self.y, self.width, self.height = x, y, 300, 150
+
+
 class Color(Enum):
     RED = 1
     GREEN = 2
@@ -40,7 +45,7 @@ def _get_mask(image, color):
         return None
 
 
-def _has_color(mask, led, color):
+def _has_color(mask, led):
     empty, colored = 0, 0
     for x in range(led.x - led.diameter // 2, led.x + led.diameter // 2):
         for y in range(led.y - led.diameter // 2, led.y + led.diameter // 2):
@@ -50,8 +55,6 @@ def _has_color(mask, led, color):
             else:
                 colored += 1
 
-            # cv2.imshow("Display mask", mask)
-            # cv2.waitKey(0)
     colored_ratio = colored / (colored + empty)
     return colored_ratio >= 0.2
 
@@ -71,7 +74,7 @@ def recognize_led_colors(image, leds, possible_colors):
 
     for led in leds:
         for color in possible_colors:
-            if _has_color(masks[color], led, color):
+            if _has_color(masks[color], led):
                 led_statuses[i] = LedStatus(color.value)
         i += 1
 
@@ -90,3 +93,21 @@ def recognize_leds(image, leds):
     statuses = recognize_led_colors(image, leds, [c.value for c in Color])
     on_off_statuses = [s if s == LedStatus.OFF else LedStatus.ON for s in statuses]
     return on_off_statuses
+
+
+def recognize_display(image, display):
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    display_mask = cv2.inRange(hsv_image, (0, 0, 168), (172, 111, 255))
+    mask = cv2.bitwise_and(image, image, mask=display_mask)
+
+    empty, colored = 0, 0
+    for x in range(display.x - display.width // 2, display.x + display.width // 2):
+        for y in range(display.y - display.diameter // 2, display.y + display.height // 2):
+            c = mask[y, x]
+            if _is_pixel_empty(c):
+                empty += 1
+            else:
+                colored += 1
+
+    colored_ratio = colored / (colored + empty)
+    return colored_ratio >= 0.5
