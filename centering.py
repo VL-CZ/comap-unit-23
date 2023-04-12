@@ -51,19 +51,17 @@ def alignImages(im1, im2):
     return im1_reg
 
 
-def centering(filename):
-    imFilename = r"C:\Users\Hoang\Desktop\centering\test_photos\20230404_143651.jpg"
-    im = cv2.imread(imFilename, cv2.IMREAD_COLOR)
-    input_image_brightness = get_image_brightness(imFilename)
+def centering(filename, output_filename):
+    im = cv2.imread(filename, cv2.IMREAD_COLOR)
+    input_image_brightness = get_image_brightness(filename)
 
     # reference photo
-    refFilename = r"C:\Users\Hoang\Desktop\centering\reference_photos\optimal.jpg"
+    refFilename = r"..\reference_images\optimal.jpg"
     if input_image_brightness < 40:
-        refFilename = r"C:\Users\Hoang\Desktop\centering\reference_photos\dark.jpg"
+        refFilename = r"..\reference_images\dark.jpg"
     elif input_image_brightness > 70:
-        refFilename = r"C:\Users\Hoang\Desktop\centering\reference_photos\light.jpg"
+        refFilename = r"..\reference_images\light.jpg"
     imReference = cv2.imread(refFilename, cv2.IMREAD_COLOR)
 
     imReg = alignImages(im, imReference)
-    outFilename = "aligned.jpg"
-    cv2.imwrite(outFilename, imReg)
+    cv2.imwrite(output_filename, imReg)
