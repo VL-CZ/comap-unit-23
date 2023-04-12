@@ -1,4 +1,6 @@
 import cv2
+from centering import centering
+
 
 def recognition():
     result()
