@@ -68,26 +68,34 @@ if __name__ == "__main__":
     #
     # cv2.imshow("FINAL", only_green)
     # cv2.waitKey(0)
-    img_path = os.path.join(os.getcwd(), 'images/img0.jpg')
-    image = cv2.imread(img_path)
-    cv2.imshow('IMG', image)
 
-    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    for i in range(2, 18):
+        img_path = os.path.join(os.getcwd(), f'images/framedisp_manual_{i}.jpg')
+        image = cv2.imread(img_path)
+        cv2.imshow('IMG', image)
 
-    # GREEN
-    green_led_lower, green_led_upper = (36, 25, 25), (70, 255, 255)
-    green_led_mask = cv2.inRange(hsv_image, green_led_lower, green_led_upper)
+        hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    res = cv2.bitwise_and(image, image, mask=green_led_mask)
-    cv2.imshow("Green", res)
+        # GREEN
+        green_led_lower, green_led_upper = (36, 25, 25), (70, 255, 255)
+        green_led_mask = cv2.inRange(hsv_image, green_led_lower, green_led_upper)
 
-    # RED
-    mask1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
-    mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
+        res = cv2.bitwise_and(image, image, mask=green_led_mask)
+        cv2.imshow("Green", res)
 
-    red_led_mask = cv2.bitwise_or(mask1, mask2)
+        # RED
+        mask1 = cv2.inRange(hsv_image, (0, 50, 20), (5, 255, 255))
+        mask2 = cv2.inRange(hsv_image, (175, 50, 20), (180, 255, 255))
 
-    res = cv2.bitwise_and(image, image, mask=red_led_mask)
-    cv2.imshow("Red", res)
+        red_led_mask = cv2.bitwise_or(mask1, mask2)
 
-    cv2.waitKey(0)
+        res = cv2.bitwise_and(image, image, mask=red_led_mask)
+        cv2.imshow("Red", res)
+
+        # DISPLAY MASK
+        display_mask = cv2.inRange(hsv_image, (0, 0, 168), (172, 111, 255))
+
+        res = cv2.bitwise_and(image, image, mask=display_mask)
+        cv2.imshow("Display", res)
+
+        cv2.waitKey(0)
