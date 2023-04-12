@@ -1,7 +1,7 @@
 # import required packages for performing OCR
 import cv2
 import pytesseract
-
+import numpy as np
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 #tesseract download: https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-5.3.1.20230401.exe
 
@@ -15,6 +15,10 @@ img = cv2.imread("cropped.png")
 gry = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 thr = cv2.adaptiveThreshold(gry, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
                             cv2.THRESH_BINARY_INV, 35, 7)
+thr= cv2.medianBlur(thr,3)
+# ker_size = 3
+# kernel = np.ones((ker_size,ker_size),np.float32)/ker_size*ker_size
+# thr = cv2.filter2D(thr,-1,kernel)
 cv2.imwrite('thresh_1.jpg', thr  )
 
 txt = pytesseract.image_to_string(thr, config="--psm 3")
