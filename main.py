@@ -4,6 +4,7 @@ from centering import centering
 import matplotlib.pyplot as plt
 import numpy as np
 from recognition import recognize_led_colors, Led, Color, recognize_leds, Display, recognize_display
+from text_detection import text_detection
 
 # CONFIG
 LEDS = [Led(68, 297), Led(96, 300), Led(176, 300), Led(371, 300), Led(454, 297), Led(486, 297)]
@@ -44,6 +45,12 @@ def read_img():
         is_display_on = recognize_display(frame, DISPLAY)
         display_status = 'ON' if is_display_on else 'OFF'
         print(f'DISPLAY: {display_status}')
+
+        # Text detection
+        detected_text = text_detection(frame)
+        print(f'Detected text: {detected_text}')
+
+        print('-' * 80) 
 
         if key == 27:  # exit on ESC
             break
