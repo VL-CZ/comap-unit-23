@@ -1,12 +1,15 @@
 import cv2
 import numpy as np
+import os
 
 MAX_FEATURES = 500
 GOOD_MATCH_PERCENT = 0.15
-
+DARK_BRIGHTNESS_THRESHOLD = 35
+LIGHT_BRIGHTNESS_THRESHOLD = 70
+REFERENCE_IMAGES_DIR = r'reference_images'
 
 def get_image_brightness(image):
-    hsl = cv2.cvtColor(cv2.imread(image), cv2.COLOR_BGR2HLS)
+    hsl = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
     Lchannel = hsl[:, :, 1]
     lvalue = cv2.mean(Lchannel)[0]
     return lvalue
@@ -51,17 +54,21 @@ def alignImages(im1, im2):
     return im1_reg
 
 
-def centering(filename, output_filename):
-    im = cv2.imread(filename, cv2.IMREAD_COLOR)
-    input_image_brightness = get_image_brightness(filename)
+def centering(im):
+    input_image_brightness = get_image_brightness(im)
 
     # reference photo
-    refFilename = r"..\reference_images\optimal.jpg"
-    if input_image_brightness < 40:
-        refFilename = r"..\reference_images\dark.jpg"
-    elif input_image_brightness > 70:
-        refFilename = r"..\reference_images\light.jpg"
+    refFilename = os.path.join(REFERENCE_IMAGES_DIR + "optimal.jpg")
+    if input_image_brightness < DARK_BRIGHTNESS_THRESHOLD:
+        refFilename = os.path.join(REFERENCE_IMAGES_DIR + "dark.jpg")
+    elif input_image_brightness > LIGHT_BRIGHTNESS_THRESHOLD:
+        refFilename = os.path.join(REFERENCE_IMAGES_DIR + "light.jpg")
+
     imReference = cv2.imread(refFilename, cv2.IMREAD_COLOR)
 
     imReg = alignImages(im, imReference)
-    cv2.imwrite(output_filename, imReg)
+    return imReg
+
+
+if __name__ == "__main__":
+    centering(r"reference_images\display_rotated.jpg", 'output.jpg')
